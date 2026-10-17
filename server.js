@@ -1,14 +1,16 @@
-require("dotenv").config();
+﻿require("dotenv").config();
 
 const express = require("express");
-const OpenAI = require("openai");
+const { GoogleGenAI } = require("@google/genai");
 
 const app = express();
 
 app.use(express.json());
 app.use(express.static(__dirname));
 
-const client = new OpenAI();
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY
+});
 
 app.post("/chat", async (req, res) => {
   try {
@@ -20,19 +22,21 @@ app.post("/chat", async (req, res) => {
       });
     }
 
-    const response = await client.responses.create({
-      model: "gpt-5.5",
-      instructions:
-        "Você é JARVIS, um assistente pessoal inteligente, educado e prestativo. Responda em português do Brasil.",
-      input: mensagem
+    const response = await ai.models.generateContent({
+      model: "gemini-3.8-flash",
+      contents: mensagem,
+      config: {
+        systemInstruction:
+          "Você é JARVIS 7, um assistente pessoal inteligente, educado, prestativo e futurista. Responda sempre em português do Brasil. Seja objetivo, mas explique quando necessário. Seu nome é JARVIS."
+      }
     });
 
     res.json({
-      resposta: response.output_text
+      resposta: response.text
     });
 
   } catch (erro) {
-    console.error(erro);
+    console.error("Erro Gemini:", erro);
 
     res.status(500).json({
       erro: erro.message
@@ -40,8 +44,10 @@ app.post("/chat", async (req, res) => {
   }
 });
 
+
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`JARVIS servidor online na porta ${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`JARVIS 7 conectado ao Gemini na porta ${PORT}`);
+  console.log(`Acesse pelo celular: http://192.168.2.38:${PORT}`);
 });

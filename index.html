@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -299,7 +299,7 @@ footer {
   </div>
 
   <div class="status">
-    ● SYSTEM ONLINE
+    â— SYSTEM ONLINE
   </div>
 </header>
 
@@ -356,7 +356,7 @@ footer {
   <div id="messages">
 
     <div class="message jarvis-message">
-      Olá. Eu sou o JARVIS 7. Todos os sistemas estão operacionais.
+      OlÃ¡. Eu sou o JARVIS 7. Todos os sistemas estÃ£o operacionais.
       Como posso ajudar?
     </div>
 
@@ -372,11 +372,11 @@ footer {
     >
 
     <button id="micButton" title="Falar com JARVIS">
-      🎙️
+      ðŸŽ™ï¸
     </button>
 
     <button id="sendButton">
-      ➤
+      âž¤
     </button>
 
   </div>
@@ -386,7 +386,7 @@ footer {
 </main>
 
 <footer>
-JARVIS 7 • PERSONAL ARTIFICIAL INTELLIGENCE SYSTEM
+JARVIS 7 â€¢ PERSONAL ARTIFICIAL INTELLIGENCE SYSTEM
 </footer>
 
 </div>
@@ -460,7 +460,7 @@ async function sendMessage() {
   } catch (error) {
 
     addMessage(
-      "Erro de comunicação: " + error.message,
+      "Erro de comunicaÃ§Ã£o: " + error.message,
       "jarvis"
     );
 
@@ -496,8 +496,16 @@ function falar(texto) {
 
 
 
-/* RECONHECIMENTO DE VOZ */
+// ENVIO DE MENSAGENS
+sendButton.addEventListener("click", sendMessage);
 
+input.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    sendMessage();
+  }
+});
+
+// RECONHECIMENTO DE VOZ
 const SpeechRecognition =
   window.SpeechRecognition ||
   window.webkitSpeechRecognition;
@@ -511,33 +519,7 @@ if (SpeechRecognition) {
 
   let ouvindo = false;
 
-  micButton.addEventListener("
-micButton.addEventListener("click", async () => {
-  try {
-    // Solicita permissão para usar o microfone
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true
-    });
-
-    // Libera o teste; o reconhecimento usará o microfone
-    stream.getTracks().forEach(track => track.stop());
-
-    // Inicia o reconhecimento de voz
-    recognition.start();
-
-  } catch (error) {
-    console.error("Erro no microfone:", error);
-
-    if (error.name === "NotAllowedError") {
-      alert("O acesso ao microfone foi negado. Permita o microfone nas configurações do navegador.");
-    } else if (error.name === "NotFoundError") {
-      alert("Nenhum microfone foi encontrado.");
-    } else {
-      alert("Não foi possível acessar o microfone: " + error.message);
-    }
-  }
-});
-", () => {
+  micButton.addEventListener("click", () => {
     if (ouvindo) return;
 
     try {
@@ -565,12 +547,7 @@ micButton.addEventListener("click", async () => {
 
   recognition.onerror = (event) => {
     console.error("Erro no reconhecimento:", event.error);
-
-    if (event.error === "not-allowed") {
-      addMessage("Permita o acesso ao microfone nas configurações do navegador.", "jarvis");
-    } else {
-      addMessage("Não consegui reconhecer sua voz: " + event.error, "jarvis");
-    }
+    addMessage("Erro no reconhecimento de voz: " + event.error, "jarvis");
   };
 
   recognition.onend = () => {
@@ -578,10 +555,9 @@ micButton.addEventListener("click", async () => {
     micButton.classList.remove("listening");
     micButton.textContent = "🎙️";
   };
-
 } else {
   micButton.addEventListener("click", () => {
-    addMessage("Este navegador não oferece reconhecimento de voz compatível. Tente usar o Google Chrome.", "jarvis");
+    addMessage("O reconhecimento de voz não é compatível com este navegador.", "jarvis");
   });
 }
 </script>
